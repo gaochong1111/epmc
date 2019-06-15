@@ -2,8 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="plugins/qmc/src/main/java"/>
 	<classpathentry kind="src" path="plugins/qmc/src/main/resources"/>
-	<classpathentry excluding="epmc/qmc/expression/MyToken.java|epmc/qmc/expression/UtilQMCExpressionParser.java" kind="src" path="plugins/qmc/src/main/javacc"/>
-	<classpathentry kind="src" path="plugins/qmc/target/generated-sources/javacc"/>
 	<classpathentry kind="src" path="plugins/qmc-exporter/src/main/java"/>
 	<classpathentry kind="src" path="plugins/qmc-exporter/src/main/resources"/>
 	<classpathentry kind="src" path="main/src/main/resources"/>
@@ -51,6 +49,9 @@
 	<classpathentry kind="src" path="plugins/propertysolver-ltl-lazy/src/main/resources"/>
 	<classpathentry kind="src" path="plugins/propertysolver-operator/src/main/java"/>
 	<classpathentry kind="src" path="plugins/propertysolver-operator/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/qmc-tests/src/test/java"/>
+	<classpathentry kind="src" path="plugins/qmc-tests/src/test/resources"/>
+	<classpathentry kind="src" path="plugins/qmc/src/main/javacc"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>

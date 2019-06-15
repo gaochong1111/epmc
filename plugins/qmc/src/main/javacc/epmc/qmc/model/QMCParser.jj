@@ -79,6 +79,7 @@ final class QMCParser {
 	}
 
 	public ModelPRISM parseModel()  {
+	  	System.out.println("PARSING QMC MODEL！！！");
 		this.contextExpQMC = new ContextExpressionQMC();
 		Options.get().set(OptionsQMC.CONTEXT_EXPRESSION_QMC,
 		  this.contextExpQMC);

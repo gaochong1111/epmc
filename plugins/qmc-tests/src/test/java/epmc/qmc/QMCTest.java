@@ -44,8 +44,8 @@ public final class QMCTest {
 
     private final static Options prepareQMCOptions() {
         List<String> qmcPlugins = new ArrayList<>();
-        qmcPlugins.add(System.getProperty("user.dir") + "/../qmc/target/classes/");
-        qmcPlugins.add(System.getProperty("user.dir") + "/../qmc-exporter/target/classes/");
+        qmcPlugins.add(System.getProperty("user.dir") + "/plugins/qmc/target/classes/");
+        qmcPlugins.add(System.getProperty("user.dir") + "/plugins/qmc-exporter/target/classes/");
         
         Options options = UtilOptionsEPMC.newOptions();
         options.set(OptionsPlugin.PLUGIN, qmcPlugins);
