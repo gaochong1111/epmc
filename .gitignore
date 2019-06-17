@@ -47,3 +47,4 @@ target/
 # 
 *.DS_Store
 
+/bin/
