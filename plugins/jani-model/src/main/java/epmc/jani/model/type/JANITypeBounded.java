@@ -129,10 +129,12 @@ public final class JANITypeBounded implements JANIType {
 
         result.add(BASE, INT);
         if (lowerBound != null) {
-            result.add(LOWER_BOUND, ExpressionParser.generateExpression(model, lowerBound));
+            // result.add(LOWER_BOUND, ExpressionParser.generateExpression(model, lowerBound));
+            result.add(LOWER_BOUND, lowerBound.toString());
         }
         if (upperBound != null) {
-            result.add(UPPER_BOUND, ExpressionParser.generateExpression(model, upperBound));
+            // result.add(UPPER_BOUND, ExpressionParser.generateExpression(model, upperBound));
+            result.add(UPPER_BOUND, upperBound.toString());
         }
         return result.build();
     }

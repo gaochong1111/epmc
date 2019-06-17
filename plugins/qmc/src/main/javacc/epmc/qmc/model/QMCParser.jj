@@ -79,6 +79,7 @@ final class QMCParser {
 	}
 
 	public ModelPRISM parseModel()  {
+	  	System.out.println("PARSING QMC MODEL！！！");
 		this.contextExpQMC = new ContextExpressionQMC();
 		Options.get().set(OptionsQMC.CONTEXT_EXPRESSION_QMC,
 		  this.contextExpQMC);
@@ -131,7 +132,7 @@ final class QMCParser {
 			  .setFormulas(formulae)
 			  .setRewards(rewards)
 			  .setPlayers(players));
-			
+			System.out.println("model: " + result.toString());
 //			result.build(contextExpQMC, model[0], null, modules, init[0], globalVariables, globalInitValues, sd[0], formulae, rewards, null, null, players);
 			return result;
 		} catch (EPMCException ime) {
@@ -517,7 +518,8 @@ private void parseConstant(Formulas formulae)  :
 			String ids = id.toString();
 			ensure(!otherNames.contains(ids), ProblemsQMC.PRISM_PARSER_REPEATED_CONSTANT, newPositional(idt.beginLine, idt.beginColumn), ids);
 			otherNames.add(ids);
-			formulae.addConstant(ids, value, type); 
+			formulae.addConstant(ids, value, type);
+		
 		}
 	)
 }
@@ -526,12 +528,15 @@ private void parseConstantQmc(Formulas formulae)  :
 {
 	Expression id = null;
 	Expression value = null;
-	Expression hilbert = null;
+	// Expression hilbert = null;
 	Token size = null;
+	Token hilbert = null;
+	Token row = null;
+	Token col = null;
 	boolean isVector = false;
 	boolean isMatrix = false;
 	boolean isSuperOperator = false;
-	boolean isBra = false;
+	// boolean isBra = false;
 	Token idt;
 }
 {
@@ -539,23 +544,32 @@ private void parseConstantQmc(Formulas formulae)  :
 	(
 		<VECTOR>
 		{ isVector = true; }
+		<LPAR>
+		hilbert = <NUM_INT>
+		<RPAR>
 		(
-			{ isBra = true; }
-			<LT>
-			{ idt = getToken(1); }
-			id = parseIdentifier()
-			<OR>
-		|
+			//{ isBra = true; }
+			//<LT>
+			//{ idt = getToken(1); }
+			//id = parseIdentifier()
+			//<OR>
+		//|
 			<OR>
 			{ idt = getToken(1); }
 			id = parseIdentifier()
 			<GT>
 		)
-		<UNDERSCORE>
-		hilbert = getIdOrInt()
+		// <UNDERSCORE>
+		// hilbert = getIdOrInt()
 	|
 		<MATRIX>
 		{ isMatrix = true; }
+		(		<LPAR>
+		row = <NUM_INT>
+		<COMMA>
+		col = < NUM_INT >
+		<RPAR>
+		)?
 		{ idt = getToken(1); }
 		id = parseIdentifier()
 	|
@@ -572,23 +586,25 @@ private void parseConstantQmc(Formulas formulae)  :
 	<NESTING_SEMICOLON_SEMICOLON>
 	{
 	  	JANIType typeComplex = new JANITypeComplex(contextExpQMC, null);
-	  	JANIType typeComplexArray = new JANITypeArray(typeComplex, null);
-	  	int sizeInt = size == null ? 0 : Integer.parseInt(size.toString());
-	  	JANIType typeSuperOperator = new JANITypeSuperoperator(contextExpQMC, sizeInt, null);
-		String ids = id.toString();
-		ensure(!otherNames.contains(ids), ProblemsQMC.PRISM_PARSER_REPEATED_CONSTANT, newPositional(idt.beginLine, idt.beginColumn), ids);
-		otherNames.add(ids);
-		if (isVector) {
-			if (isBra) {
-				formulae.addConstant(ids, contextExpQMC.newBraToVector(value), typeComplexArray); 
-			} else {
-				formulae.addConstant(ids, contextExpQMC.newKetToVector(value), typeComplexArray); 
-			}
-		} else if (isMatrix) {
-			formulae.addConstant(ids, value, typeComplexArray); 
-		} else if (isSuperOperator) {
-			formulae.addConstant(ids, value, typeSuperOperator); 
-		}
+        
+        String ids = id.toString();
+        ensure(!otherNames.contains(ids), ProblemsQMC.PRISM_PARSER_REPEATED_CONSTANT, newPositional(idt.beginLine, idt.beginColumn), ids);
+        otherNames.add(ids);
+        
+        if (isVector) {
+          	int hilbertInt = hilbert == null ? 0 : Integer.parseInt(hilbert.toString());
+        	JANIType typeComplexArray = new JANITypeArray(typeComplex, hilbertInt, null);
+        	formulae.addConstant(ids, contextExpQMC.newKetToVector(value), typeComplexArray);
+        } else if (isMatrix) {
+          	int rowInt = row == null ? 2 : Integer.parseInt(row.toString());
+          	int colInt = col == null ? 2 : Integer.parseInt(col.toString());
+        	JANIType typeComplexArray = new JANITypeArray(typeComplex, rowInt, colInt, null);
+        	formulae.addConstant(ids, value, typeComplexArray);
+        } else if (isSuperOperator) {
+          	int sizeInt = size == null ? 0 : Integer.parseInt(size.toString());
+        	JANIType typeSuperOperator = new JANITypeSuperoperator(contextExpQMC, sizeInt, null);
+            formulae.addConstant(ids, value, typeSuperOperator);
+        }
 	}
 }
 
@@ -717,7 +733,7 @@ private void parseModule(List<Module> modules)  :
 	{
 	    ensure(!moduleNames.contains(ids), ProblemsQMC.PRISM_PARSER_REPEATED_MODULE, newPositional(t.beginLine, t.beginColumn), ids);
 		moduleNames.add(ids);
-		modules.add(m); 
+		modules.add(m);
 	}
 }
 
@@ -823,6 +839,7 @@ private JANIType parseVariable()  :
 		{ JANITypeBounded typeBounded = new JANITypeBounded();
 		typeBounded.setLowerBound(low);
 		typeBounded.setUpperBound(high);
+		//typeBounded.setModel(this.model.toJANI(false));
 		type = typeBounded; }
 	|
 		<CLOCK> 
