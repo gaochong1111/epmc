@@ -31,12 +31,20 @@
  ConstantQmc   
  | ( "const"   
      (  ["int"|"double"|"bool"] 
+<<<<<<< HEAD
      |
+=======
+     <b>|</b>
+>>>>>>> d3b1bcc20e941e40c1f3460d77b685b011d8ba88
          ("rate"|"prob") )   
      Identifier    
      (
          ("=" ExpSemicolon ";") 
+<<<<<<< HEAD
      | ";" ) 
+=======
+     <b>|</b> ";" ) 
+>>>>>>> d3b1bcc20e941e40c1f3460d77b685b011d8ba88
    )  
 
  *注意*: 这里的 ["int"|"double"|"bool"] 是可以缺省的, 默认为int，比如 const Identifier = Exp;是合法的。  
@@ -53,9 +61,14 @@
 
 ***修改意见***: vector类型的size不使用下划线表示，矩阵要显示表示size  
 修改为：   
+<<<<<<< HEAD
 **ConstantQmc**:   
 "const" (("vector" "(" INT ")" ("|" Identifier ">") )    
 | ( "matrix" "(" INT "," INT ")" Identifier )    
+=======
+"const" (("vector(" Int ")" ( ("<" Identifier "|")|("|" Identifier ">") ))    
+| ( "matrix(" Int "," Int ")" Identifier )    
+>>>>>>> d3b1bcc20e941e40c1f3460d77b685b011d8ba88
 | ( "superoperator(" Int ")" Identifier )) "=" ExpSemicolon ";"
  
  **Label**:  
@@ -212,6 +225,7 @@ TemporalBinary
     ("<" IdOrInt "|" "_" IdOrInt    
     | "|" IdOrInt ">" "_" IdOrInt)?  
 
+<<<<<<< HEAD
 **修改意见**：
 -如果缺省2-
 **Ket**:
@@ -230,6 +244,8 @@ TemporalBinary
     | Bra (Bra)?
     
 
+=======
+>>>>>>> d3b1bcc20e941e40c1f3460d77b685b011d8ba88
 **IdOrInt**: Int | Identifier
 
 **Function**:  
@@ -298,10 +314,13 @@ TemporalBinary
     | ( "Fredkin" | "FK")
     | SingleMatrix
 
+<<<<<<< HEAD
 **修改意见**：
     M0,M1 扩展为 M(INT, INT)
 
 
+=======
+>>>>>>> d3b1bcc20e941e40c1f3460d77b685b011d8ba88
 **SingleMatrix**: "{" MatrixRow (";" MatrixRow)* "}"
 
 **MatrixRow**: Exp ( "," Exp)*
