@@ -1,7 +1,7 @@
 # 符号说明    
 ()*: 0到多次      
 ()?: 0或1次      
-{}+: 1或多次      
+()+: 1或多次      
     
 # 语法描述    
 **ModelPRISM**:      
@@ -99,8 +99,8 @@
      | ProbUpdate    
      
  **ProbUpdate**:      
-     "~[]"     
-     | "(" | Identifier | "true") ExpColon ":" DetUpdate     
+     ("~[]" | "(" | Identifier | "true")    
+        ExpColon ":" DetUpdate     
          ( "+" ExpColon ":" DetUpdate)*    
      
  **DetUpdate**:      
