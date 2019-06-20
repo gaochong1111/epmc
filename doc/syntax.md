@@ -4,6 +4,7 @@
 ()+: 1或多次      
     
 # 语法描述    
+## model syntax
 **ModelPRISM**:      
      (     
          ModelType      
@@ -154,7 +155,8 @@
      ( ExpressionIdentifier )     
      | ( "(" SystemParallelCommonActions ")")    
     
-# exp syntax    
+    
+## exp syntax    
 **Exp**:        
     ExpressionITE    
     
@@ -228,21 +230,21 @@
     | BraKet    
     
 **BraKet**:    
-    ("<" IdOrInt "|" (IdOrInt ">")? "_" IdOrInt         
-    | "|" IdOrInt ">" "_" IdOrInt)      
-    ("<" IdOrInt "|" "_" IdOrInt        
-    | "|" IdOrInt ">" "_" IdOrInt)?      
+    ("<" IdOrInt "|" (IdOrInt ">")? "\_" IdOrInt         
+    | "|" IdOrInt ">" "\_" IdOrInt)      
+    ("<" IdOrInt "|" "\_" IdOrInt        
+    | "|" IdOrInt ">" "\_" IdOrInt)?      
     
 **修改意见**：    
     
 **Ket**:    
     "|" ("0" | "1") ">"    
-    | "|" INT ">" "_" INT    
+    | "|" INT ">" "\_" INT    
     | "|" Identifier ">"    
     
 **Bra**:    
     "<" ("0" | "1") "|"    
-    | "<" INT "|" "_" INT    
+    | "<" INT "|" "\_" INT    
     | "<" Identifier "|"       
     
 **BraKet**:    
@@ -250,7 +252,7 @@
     | Ket (Bra | Ket)?    
     | Bra (Bra)?    
         
-**IdOrInt**: Int | Identifier    
+**IdOrInt**: INT | Identifier    
     
 **Function**:      
     SpecialFunction    
