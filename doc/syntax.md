@@ -230,7 +230,7 @@
     | BraKet    
     
 **BraKet**:    
-    ("<" IdOrInt "|" (IdOrInt ">")? "\_" IdOrInt         
+    ("<" IdOrInt "|" ( IdOrInt ">")? "\_" IdOrInt         
     | "|" IdOrInt ">" "\_" IdOrInt)      
     ("<" IdOrInt "|" "\_" IdOrInt        
     | "|" IdOrInt ">" "\_" IdOrInt)?      
@@ -238,12 +238,12 @@
 **修改意见**：    
     
 **Ket**:    
-    "|" ("0" | "1") ">"    
+    "|" ("0" | "1") ">" ("\_" INT)   
     | "|" INT ">" "\_" INT    
     | "|" Identifier ">"    
     
 **Bra**:    
-    "<" ("0" | "1") "|"    
+    "<" ("0" | "1") "|" ("\_" INT)   
     | "<" INT "|" "\_" INT    
     | "<" Identifier "|"       
     

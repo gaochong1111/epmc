@@ -733,6 +733,10 @@ TOKEN : // RESERVED KEYWORDS
 |	< PS : "PS" >
 |	< TOFFOLI : "Toffoli" >
 |	< TF : "TF" >
+|   < KET_ZERO : "|0>" >
+|   < KET_ONE : "|1>" >
+|   < BRA_ZERO : "<0|" >
+|   < BRA_ONE : "<1|" >
 |	< IDENTIFIER : [ "A"-"Z","a"-"z" ] ( [ "A"-"Z","a"-"z","_","0"-"9" ] )* >
 |	< NUM_INT : (["1"-"9"](["0"-"9"])*)|("0") >
 |	< NUM_REAL : (["0"-"9"])+(".")?(["0"-"9"])+(["e","E"](["-","+"])?(["0"-"9"])+)? >
@@ -1136,7 +1140,222 @@ private Expression parseBasic(boolean parseExp)  :
 	{ return e; }
 }
 
+private Expression parseBra(boolean parseExp) :
+{
+  	Expression result = null;
+  	Expression first = null;
+  	Expression hilbert = null;
+  	Token firstToken = null;
+  	Token hilbertToken = null;
+  	String hilbertStr = null;
+  	InfoExpression info = new InfoExpression(string);
+}
+{
+  { beginExpression(info); }
+  (
+    <BRA_ZERO>
+    (    	<UNDERSCORE>
+    	hilbertToken = <NUM_INT>
+    )?
+    {
+      first = contextExpQMC.newLiteralInt("0");
+      if (hilbertToken == null) {
+	  	hilbertStr = "2";
+      } else {
+      	hilbertStr = hilbertToken.toString();
+      }
+    }
+  |
+  	<BRA_ONE>
+    (
+    	<UNDERSCORE>
+    	hilbertToken = <NUM_INT>
+    )?
+  	{
+  	  first = contextExpQMC.newLiteralInt("1");
+      if (hilbertToken == null) {
+	  	hilbertStr = "2";
+      } else {
+      	hilbertStr = hilbertToken.toString();
+      }  	}
+  |   	<LT>
+  	(  
+	    LOOKAHEAD({ getToken(1).kind == NUM_INT} )
+		firstToken = <NUM_INT>
+		<OR>
+		<UNDERSCORE>
+		hilbertToken = <NUM_INT>
+		{
+		  first = contextExpQMC.newLiteralInt(hilbertToken.toString());
+      	  hilbertStr = hilbertToken.toString();
+		}
+	|
+		LOOKAHEAD({ getToken(1).kind == IDENTIFIER} )
+		first = parseIdentifier()
+		<OR>
+		{
+		  // TODO: get hilbert value from model object
+		  hilbertStr = "2";
+		}
+	)
+  )
+  { 
+	endExpression(info);
+	hilbert = contextExpQMC.newLiteralInt(hilbertStr);
+	result = contextExpQMC.newBaseBra(first, hilbert);
+	return result;
+  }
+}
+
+
+private Expression parseKet(boolean parseExp) :
+{
+  	Expression result = null;
+  	Expression first = null;
+  	Expression hilbert = null;
+  	Token firstToken = null;
+  	Token hilbertToken = null;
+  	String hilbertStr = null;
+  	InfoExpression info = new InfoExpression(string);
+}
+{
+  { beginExpression(info); }
+  (
+    <KET_ZERO>
+    (
+    	<UNDERSCORE>
+    	hilbertToken = <NUM_INT>
+    )?
+    {
+      first = contextExpQMC.newLiteralInt("0");
+      if (hilbertToken == null) {
+	  	hilbertStr = "2";
+      } else {
+      	hilbertStr = hilbertToken.toString();
+      }
+    }
+  |
+  	<KET_ONE>
+    (
+    	<UNDERSCORE>
+    	hilbertToken = <NUM_INT>
+    )?
+    {
+      first = contextExpQMC.newLiteralInt("1");
+      if (hilbertToken == null) {
+	  	hilbertStr = "2";
+      } else {
+      	hilbertStr = hilbertToken.toString();
+      }
+    }
+  | 
+  	<OR>
+  	(  
+	    LOOKAHEAD({ getToken(1).kind == NUM_INT} )
+		firstToken = <NUM_INT>
+		<GT>
+		<UNDERSCORE>
+		hilbertToken = <NUM_INT>
+		{
+		  first = contextExpQMC.newLiteralInt(hilbertToken.toString());
+      	  hilbertStr = hilbertToken.toString();
+		}
+	|
+		LOOKAHEAD({ getToken(1).kind == IDENTIFIER} )
+		first = parseIdentifier()
+		<GT>
+		{
+		  // TODO: get hilbert value from model object
+		  hilbertStr = "2";
+		}
+	)
+  )
+  { 
+	endExpression(info);
+	hilbert = contextExpQMC.newLiteralInt(hilbertStr);
+	result = contextExpQMC.newBaseKet(first, hilbert);
+	return result;
+  }
+}
+
+
 private Expression parseBraKet(boolean parseExp)  :
+{
+	Expression first;
+	boolean firstBra = false;
+	Expression second = null;
+	boolean secondBra = false;
+	Expression hilbert;
+	InfoExpression info = new InfoExpression(string);
+}
+
+{
+	{ beginExpression(info); }
+	(
+		LOOKAHEAD({ getToken(1).kind == LT
+			&& (getToken(2).kind == IDENTIFIER || getToken(2).kind == NUM_INT)
+			&& getToken(3).kind == OR
+			&& (getToken(4).kind == IDENTIFIER || getToken(4).kind == NUM_INT) } )
+		{ firstBra = true; }
+		<LT>
+		first = getIdOrInt()
+		<OR>
+		second = getIdOrInt()
+		<GT>
+		{
+		  return newOperator(OperatorMultiply.MULTIPLY, first, second);
+		}
+	|
+		LOOKAHEAD({ (getToken(1).kind == KET_ZERO || getToken(1).kind == KET_ONE 
+		  	|| (getToken(1).kind == OR
+			&& (getToken(2).kind == IDENTIFIER || getToken(2).kind == NUM_INT)
+			&& getToken(3).kind == GT)) } )
+		first = parseKet(parseExp)
+		(
+		  LOOKAHEAD({ (getToken(1).kind == KET_ZERO || getToken(1).kind == KET_ONE 
+		  	|| (getToken(1).kind == OR
+			&& (getToken(2).kind == IDENTIFIER || getToken(2).kind == NUM_INT)
+			&& getToken(3).kind == GT)) } )
+			second = parseKet(parseExp)
+		|
+		  LOOKAHEAD({ (getToken(1).kind == BRA_ZERO || getToken(1).kind == BRA_ONE 
+		  	|| (getToken(1).kind == LT
+			&& (getToken(2).kind == IDENTIFIER || getToken(2).kind == NUM_INT)
+			&& getToken(3).kind == OR)) } )
+			{ secondBra = true; }
+			second = parseBra(parseExp)
+		)?
+	| 
+	  LOOKAHEAD({ (getToken(1).kind == BRA_ZERO || getToken(1).kind == BRA_ONE 
+	  	|| (getToken(1).kind == LT
+		&& (getToken(2).kind == IDENTIFIER || getToken(2).kind == NUM_INT)
+		&& getToken(3).kind == OR)) } )
+		{ firstBra = true; }
+		first = parseBra(parseExp)
+		(
+	  LOOKAHEAD({ (getToken(1).kind == BRA_ZERO || getToken(1).kind == BRA_ONE 
+	  	|| (getToken(1).kind == LT
+		&& (getToken(2).kind == IDENTIFIER || getToken(2).kind == NUM_INT)
+		&& getToken(3).kind == OR)) } )
+		  { secondBra = true;}
+		  second = parseBra(parseExp)
+		)?
+	)
+	{
+		endExpression(info);
+		if (second == null) {
+			return first;
+		} else {
+			if (firstBra == secondBra) {
+				return newOperator(OperatorKronecker.KRONECKER, first, second);
+			} else {
+				return newOperator(OperatorMultiply.MULTIPLY, first, second);
+			}
+		}
+	}
+}
+
+private Expression parseBraKet1(boolean parseExp)  :
 {
 	Expression first;
 	boolean firstBra = false;

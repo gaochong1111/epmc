@@ -25,6 +25,20 @@ import epmc.qmc.operator.OperatorSuperOperatorMatrix;
 // TODO get rid of this class
 public final class ContextExpressionQMC {
     /**
+     * Obtain integer literal expression.
+     * 
+     * @param value literal value of integer
+     * @return integer literal expression
+     */
+	public Expression newLiteralInt(String value) {
+		return new ExpressionLiteral.Builder()
+		    .setValue(value)
+		    .setType(ExpressionTypeInteger.TYPE_INTEGER)
+			.build();
+	}
+	
+
+    /**
      * Obtain identity matrix expression.
      * Parameter {@code size} specifies the expression the identity matrix shall
      * have. The expression must later evaluate to an integer value.
