@@ -451,7 +451,7 @@ private void parseConstant(Formulas formulae)  :
 	(
 		(
 			<CONSTANT>
-			{ type = new JANITypeInt(); }
+			// { type = new JANITypeInt(); }
 			(
 				<INT>
 				{ type = new JANITypeInt(); }
@@ -461,7 +461,7 @@ private void parseConstant(Formulas formulae)  :
 			|
 				<BOOL>
 				{ type = new JANITypeBool(); } 
-			)? //if missing, it corresponds to CONST INT, so covered by the initial assignment...
+			)
 		| // equivalent to CONSTANT DOUBLE
 			(
 				<RATE> 
