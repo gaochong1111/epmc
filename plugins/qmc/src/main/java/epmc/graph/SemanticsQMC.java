@@ -17,7 +17,7 @@ public enum SemanticsQMC implements SemanticsDTMC,  SemanticsDiscreteTime, Seman
      * 
      * @return whether this is a quantum Markov chain (QMC)
      */
-    static boolean isQMC(Semantics semantics) {
+    public static boolean isQMC(Semantics semantics) {
         return semantics instanceof SemanticsQMC;
     }
 }

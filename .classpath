@@ -48,6 +48,8 @@
 	<classpathentry kind="src" path="plugins/value-basic/src/main/resources"/>
 	<classpathentry kind="src" path="plugins/expression-basic/src/main/java"/>
 	<classpathentry kind="src" path="plugins/expression-basic/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-ltl-qmc/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-ltl-qmc/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
