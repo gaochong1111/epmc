@@ -338,7 +338,7 @@
     | PropQuantCmpType ExpTemporal "[" ExpTemporal ("given" ExpTemporal)? (OldSchoolFilter)? "]"    
     )    
     
-**ProbQuant**:    
+**SteadyQuant**:    
     SteadyQuantProbDirType     
     (    
         ("=" ("?" | ExpTemporal) "[" ExpTemporal ("given" ExpTemporal)? (OldSchoolFilter)? "]")    
