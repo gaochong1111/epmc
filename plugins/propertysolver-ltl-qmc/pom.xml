@@ -26,6 +26,20 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>epmc.jani</groupId>
+      <artifactId>epmc-jani-model</artifactId>
+      <version>0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../jani-model/target/epmc-jani-model-0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>epmc.prism</groupId>
+      <artifactId>epmc-prism-format</artifactId>
+      <version>0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../prism-format/target/epmc-prism-format-0.jar</systemPath>
+    </dependency>
+    <dependency>
       <groupId>epmc.automata</groupId>
       <artifactId>epmc-automata</artifactId>
       <version>0</version>
@@ -80,6 +94,13 @@
       <version>0</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/../util/target/epmc-util-0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>epmc.qmc</groupId>
+      <artifactId>epmc-qmc</artifactId>
+      <version>0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../qmc/target/epmc-qmc-0.jar</systemPath>
     </dependency>
   </dependencies>
 </project>
