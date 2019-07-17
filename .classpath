@@ -54,6 +54,24 @@
 	<classpathentry kind="src" path="plugins/propertysolver-ltl-lazy/src/main/resources"/>
 	<classpathentry kind="src" path="tests/src/test/java"/>
 	<classpathentry kind="src" path="tests/src/test/resources"/>
+	<classpathentry kind="src" path="plugins/param/src/main/java"/>
+	<classpathentry kind="src" path="plugins/param/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-coalition/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-coalition/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-filter/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-filter/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-ltl-fairness/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-ltl-fairness/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-multiobjective/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-multiobjective/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-reachability/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-reachability/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-reward/src/main/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-reward/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/constraintsolver/src/main/java"/>
+	<classpathentry kind="src" path="plugins/constraintsolver/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/automaton-generalised-rabin/src/main/java"/>
+	<classpathentry kind="src" path="plugins/automaton-generalised-rabin/src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/usr/lib/jni"/>
@@ -71,6 +89,8 @@
 	<classpathentry kind="lib" path="lib/jna-5.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-5.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/fastutil-8.2.2.jar"/>
+	<classpathentry kind="lib" path="plugins/param/lib/jas-2.6.5786-bin.jar"/>
+	<classpathentry kind="lib" path="plugins/param/lib/log4j.jar"/>
 	<classpathentry kind="src" path="plugins/automata/src/main/javacc"/>
 	<classpathentry kind="src" path="plugins/prism-format/src/main/javacc"/>
 	<classpathentry kind="src" path="plugins/qmc/src/main/javacc"/>
