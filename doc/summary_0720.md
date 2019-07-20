@@ -51,7 +51,7 @@
 - 在epmc中新建了求解plugin
     ```
     参考propertysolver-ltl-lazy新加了propertysolver-ltl-qmc求解插件，并测试运行完成模型解析和属性解析
-    Q1: ltl公式解析部分目前未测试成功。
+    Q1: ltl公式解析部分测试成功
         需了解目前epmc所支持的ltl公式是怎么处理的，考虑复用。
 
     ```
