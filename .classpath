@@ -70,8 +70,9 @@
 	<classpathentry kind="src" path="plugins/propertysolver-reward/src/main/resources"/>
 	<classpathentry kind="src" path="plugins/constraintsolver/src/main/java"/>
 	<classpathentry kind="src" path="plugins/constraintsolver/src/main/resources"/>
-	<classpathentry kind="src" path="plugins/automaton-generalised-rabin/src/main/java"/>
 	<classpathentry kind="src" path="plugins/automaton-generalised-rabin/src/main/resources"/>
+	<classpathentry kind="src" path="plugins/propertysolver-coalition/src/test/java"/>
+	<classpathentry kind="src" path="plugins/propertysolver-coalition/src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="/usr/lib/jni"/>

@@ -47,4 +47,8 @@ target/
 # 
 *.DS_Store
 
+# ignore class graph
+.cld
+
+#
 /bin/
