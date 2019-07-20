@@ -917,7 +917,7 @@ public class PropertySolverExplicitLTLQMC implements PropertySolver {
     @Override
     public boolean canHandle() {
         assert property != null;
-        if (!(modelChecker.getEngine() instanceof EngineExplicit)) {
+      /*  if (!(modelChecker.getEngine() instanceof EngineExplicit)) {
             return false;
         }
         Semantics semantics = modelChecker.getModel().getSemantics();
@@ -937,7 +937,7 @@ public class PropertySolverExplicitLTLQMC implements PropertySolver {
         }
         if (propertyQuantifier.getQuantified() instanceof ExpressionSteadyState) {
             return false;
-        }
+        }*/
         /*
         if (!TypeReal.is(TypeWeight.get())) {
             return false;
@@ -967,7 +967,13 @@ public class PropertySolverExplicitLTLQMC implements PropertySolver {
         Set<Object> required = new LinkedHashSet<>();
         required.add(CommonProperties.STATE);
         required.add(CommonProperties.PLAYER);
-        Set<Expression> inners = UtilLTL.collectLTLInner(propertyQuantifier.getQuantified());
+        Set<Expression> inners;
+        //*****if the property is not quantifier expression****
+        if (propertyQuantifier != null) {
+        	inners = UtilLTL.collectLTLInner(propertyQuantifier.getQuantified());
+        } else {
+        	inners = UtilLTL.collectLTLInner(property);
+        }
         StateSet allStates = UtilGraph.computeAllStatesExplicit(modelChecker.getLowLevel());
         for (Expression inner : inners) {
             required.addAll(modelChecker.getRequiredNodeProperties(inner, allStates));
