@@ -821,6 +821,7 @@ public class PropertySolverExplicitLTLQMC implements PropertySolver {
         System.out.println(s);
         System.out.println(property.toString());
         System.out.println("**************************************");
+        System.exit(0);
         return null;
         /*
         Expression quantifiedProp = propertyQuantifier.getQuantified();
@@ -976,7 +977,7 @@ public class PropertySolverExplicitLTLQMC implements PropertySolver {
         }
         StateSet allStates = UtilGraph.computeAllStatesExplicit(modelChecker.getLowLevel());
         for (Expression inner : inners) {
-            required.addAll(modelChecker.getRequiredNodeProperties(inner, allStates));
+            // required.addAll(modelChecker.getRequiredNodeProperties(inner, allStates));
         }
         return Collections.unmodifiableSet(required);
     }
