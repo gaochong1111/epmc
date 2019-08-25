@@ -76,7 +76,7 @@ public final class PropertySolverExplicitQLTLUntil implements PropertySolver {
         StateSetExplicit forStatesExplicit = (StateSetExplicit) forStates;
         
         //////
-        /// System.out.println("Before: ");
+        System.out.println("QLTL: ");
         System.out.println(graph);
         
         System.exit(0);
@@ -148,15 +148,14 @@ public final class PropertySolverExplicitQLTLUntil implements PropertySolver {
     @Override
     public Set<Object> getRequiredNodeProperties() {
         Set<Object> required = new LinkedHashSet<>();
-		/*
-		 * required.add(CommonProperties.STATE); required.add(CommonProperties.PLAYER);
-		 * ExpressionQuantifier propertyQuantifier = (ExpressionQuantifier) property;
-		 * Set<Expression> inners =
-		 * UtilPCTL.collectPCTLInner(propertyQuantifier.getQuantified()); StateSet
-		 * allStates = UtilGraph.computeAllStatesExplicit(modelChecker.getLowLevel());
-		 * for (Expression inner : inners) {
-		 * required.addAll(modelChecker.getRequiredNodeProperties(inner, allStates)); }
-		 */
+        required.add(CommonProperties.STATE);
+        required.add(CommonProperties.PLAYER);
+        ExpressionQuantifier propertyQuantifier = (ExpressionQuantifier) property;
+        Set<Expression> inners = UtilQLTL.collectQLTLInner(propertyQuantifier.getQuantified());
+        StateSet allStates = UtilGraph.computeAllStatesExplicit(modelChecker.getLowLevel());
+        for (Expression inner : inners) {
+            required.addAll(modelChecker.getRequiredNodeProperties(inner, allStates));
+        }
         return required;
     }
 
