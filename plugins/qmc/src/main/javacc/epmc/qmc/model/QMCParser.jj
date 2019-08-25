@@ -79,7 +79,7 @@ final class QMCParser {
 	}
 
 	public ModelPRISM parseModel()  {
-	  	System.out.println("PARSING QMC MODEL！！！");
+	  	// System.out.println("PARSING QMC MODEL！！！");
 		this.contextExpQMC = new ContextExpressionQMC();
 		Options.get().set(OptionsQMC.CONTEXT_EXPRESSION_QMC,
 		  this.contextExpQMC);
@@ -132,7 +132,7 @@ final class QMCParser {
 			  .setFormulas(formulae)
 			  .setRewards(rewards)
 			  .setPlayers(players));
-			System.out.println("model: " + result.toString());
+			// System.out.println("model: " + result.toString());
 //			result.build(contextExpQMC, model[0], null, modules, init[0], globalVariables, globalInitValues, sd[0], formulae, rewards, null, null, players);
 			return result;
 		} catch (EPMCException ime) {

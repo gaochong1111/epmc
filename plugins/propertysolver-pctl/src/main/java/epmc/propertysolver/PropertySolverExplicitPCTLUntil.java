@@ -109,6 +109,13 @@ public final class PropertySolverExplicitPCTLUntil implements PropertySolver {
         assert forStates != null;
         assert property instanceof ExpressionQuantifier;
         StateSetExplicit forStatesExplicit = (StateSetExplicit) forStates;
+        
+        //////
+        System.out.println("PCTL: ");
+        System.out.println(graph);
+        System.exit(0);
+        
+        
         graph.explore(forStatesExplicit.getStatesExplicit());
         ExpressionQuantifier propertyQuantifier = (ExpressionQuantifier) property;
         Expression quantifiedProp = propertyQuantifier.getQuantified();
