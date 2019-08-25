@@ -69,9 +69,9 @@ import epmc.value.Value;
 import epmc.value.ValueBoolean;
 
 public class BuechiImpl implements Buechi {
-    private final static String SPOT_PARAM_FORMULA = "-f";
+    private final static String SPOT_PARAM_FORMULA = "-peven";
     private final static String SPOT_PARAM_LOW_OPTIMISATIONS = "--low";
-    private final static String SPOT_PARAM_FORCE_TRANSITION_BASED_ACCEPTANCE = "-Ht";
+    private final static String SPOT_PARAM_FORCE_TRANSITION_BASED_ACCEPTANCE = "-S";
     private final static String DETERMINISTIC = "deterministic";
 
     private final static String IDENTIFIER = "buechi-spot";
@@ -128,7 +128,73 @@ public class BuechiImpl implements Buechi {
         for (int exprNr = 0; exprNr < expressions.length; exprNr++) {
             expressionTypes[exprNr] = TypeBoolean.get();
         }
-
+        
+        int totalSize = 0;
+        for (int node = 0; node < automaton.getNumNodes(); node++) {
+            for (int succNr = 0; succNr < automaton.getNumSuccessors(node); succNr++) {
+                totalSize++;
+            }
+        }
+        this.evaluators = new EvaluatorExplicit[totalSize];
+        totalSize = 0;
+        EdgeProperty labels = automaton.getEdgeProperty(CommonProperties.AUTOMATON_LABEL);
+        for (int node = 0; node < automaton.getNumNodes(); node++) {
+            for (int succNr = 0; succNr < automaton.getNumSuccessors(node); succNr++) {
+                BuechiTransition trans = labels.getObject(node, succNr);
+                Expression guard = trans.getExpression();
+                evaluators[totalSize] = UtilEvaluatorExplicit.newEvaluator(guard,
+                        new ExpressionToTypeBoolean(expressions), expressions);
+                totalSize++;
+            }
+        }
+        totalSize = 0;
+        for (int node = 0; node < automaton.getNumNodes(); node++) {
+            for (int succNr = 0; succNr < automaton.getNumSuccessors(node); succNr++) {
+                BuechiTransition trans = labels.getObject(node, succNr);
+                ((BuechiTransitionImpl) trans).setResult(ValueBoolean.as(evaluators[totalSize].getResultValue()));
+                totalSize++;
+            }
+        }
+    }
+    
+    public BuechiImpl(Expression expression, Expression[] expressions, boolean pa) {
+        assert expression != null;
+        this.name = UtilExpressionStandard.niceForm(expression);
+        // TODO does not work if used there
+        //        if (options.getBoolean(OptionsAutomaton.AUTOMATA_REPLACE_NE)) {
+        //          expression = replaceNeOperator(expression);
+        //    }
+        OptionsAutomaton.Ltl2BaAutomatonBuilder builder = Options.get().getEnum(OptionsAutomaton.AUTOMATON_BUILDER);
+        Set<Expression> expressionsSeen = new HashSet<>();
+        if (builder == OptionsAutomaton.Ltl2BaAutomatonBuilder.SPOT) {
+            automaton = createSpotAutomaton(expression, expressionsSeen);
+            deterministic = false;
+            HanoiHeader header = automaton.getGraphPropertyObject(HanoiHeader.class);
+            for (String automatonPropert : header.getProperties()) {
+                if (automatonPropert.equals(DETERMINISTIC)) {
+                    deterministic = true;
+                    break;
+                }
+            }
+        } else {
+            automaton = null;
+        }
+        if (expressions == null) {
+            expressions = new Expression[expressionsSeen.size()];
+            int index = 0;
+            for (Expression expr : expressionsSeen) {
+                expressions[index] = expr;
+                index++;
+            }
+        }
+        
+        trueState = findTrueState();
+        this.expressions = expressions.clone();
+        expressionTypes = new Type[expressions.length];
+        for (int exprNr = 0; exprNr < expressions.length; exprNr++) {
+            expressionTypes[exprNr] = TypeBoolean.get();
+        }
+        
         int totalSize = 0;
         for (int node = 0; node < automaton.getNumNodes(); node++) {
             for (int succNr = 0; succNr < automaton.getNumSuccessors(node); succNr++) {
@@ -217,6 +283,11 @@ public class BuechiImpl implements Buechi {
                 autExecArgsList.addAll(additionalSpotParamerters);
             }
             final String[] autExecArgs = autExecArgsList.toArray(new String[0]);
+            for (String str : autExecArgs) {
+            	System.out.print(str);
+            	System.out.print(" ");
+            }
+            System.out.println();
             final Process autProcess = Runtime.getRuntime().exec(autExecArgs);
             final BufferedReader autIn = new BufferedReader
                     (new InputStreamReader(autProcess.getInputStream()));
@@ -488,4 +559,5 @@ public class BuechiImpl implements Buechi {
     public String getName() {
         return name;
     }
+
 }

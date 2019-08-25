@@ -145,7 +145,7 @@ HanoiHeader Header(Map<String,Expression> ap2expr) :
     for (int state = startStates.nextSetBit(0); state >= 0; state = startStates.nextSetBit(state + 1)) {
       ensure(state < header.getNumStates(), ProblemsHoa.HOA_INVALID_START_STATE, state, header.getNumStates());
     }
-    header.checkAcceptanceName();
+    //header.checkAcceptanceName();
     return header;
   }
 }
@@ -263,7 +263,7 @@ void AccName(HanoiHeader header) :
   | (<STREETT> numAccs = Int() { name.setName(HanoiHeader.STREETT); name.addParameter(numAccs); })
   | (<RABIN> numAccs = Int() { name.setName(HanoiHeader.RABIN); name.addParameter(numAccs); })
   | (<GENERALIZED_RABIN> numPairs = Int() { name.setName(HanoiHeader.GENERALIZED_RABIN); name.addParameter(numPairs); } (genParameter = Int() {name.addParameter(genParameter);})*)
-  | (<PARITY> numPairs = Int() (<MIN> {minMax = HanoiHeader.PARITY_MIN;} | <MAX> {minMax = HanoiHeader.PARITY_MAX;} ) (<ODD> {oddEven = HanoiHeader.PARITY_ODD;} | <EVEN> {oddEven = HanoiHeader.PARITY_EVEN;} ) numPairs = Int() { name.setName(HanoiHeader.PARITY); name.addParameter(minMax); name.addParameter(oddEven); name.addParameter(numPairs); } )
+  | (<PARITY> (<MIN> {minMax = HanoiHeader.PARITY_MIN;} | <MAX> {minMax = HanoiHeader.PARITY_MAX;} ) (<ODD> {oddEven = HanoiHeader.PARITY_ODD;} | <EVEN> {oddEven = HanoiHeader.PARITY_EVEN;} ) numPairs = Int() { name.setName(HanoiHeader.PARITY); name.addParameter(minMax); name.addParameter(oddEven); name.addParameter(numPairs); } )
   | (<ALL> { name.setName(HanoiHeader.ALL); })
   | (<NONE> { name.setName(HanoiHeader.NONE); })
   | (identifier = Identifier() { name.setName(identifier); } ( (identifier = Identifier() { name.addParameter(identifier); } ) | (intParameter = Int() { name.addParameter(intParameter); }) )* )

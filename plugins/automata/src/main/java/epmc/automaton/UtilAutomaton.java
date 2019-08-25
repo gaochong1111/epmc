@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import epmc.automata.determinisation.AutomatonScheweParity;
+import epmc.automata.determinisation.ParityAutomaton;
 import epmc.automaton.hoa.HoaParser;
 import epmc.error.Positional;
 import epmc.expression.Expression;
@@ -68,6 +70,43 @@ public final class UtilAutomaton {
         return expr2string(expression, expr2str, numAPs, options.getBoolean(OptionsAutomaton.AUTOMATON_SUBSUME_APS));
     }
 
+    public static ParityAutomaton newParityAutomaton
+    (Expression property, Expression[] expressions) {
+        assert property != null;
+        Options options = Options.get();
+        Buechi buechi = null;
+        Log log = options.get(OptionsMessages.LOG);
+        Expression usedProperty = property;
+        log.send(MessagesAutomaton.COMPUTING_ORIG_BUECHI);
+        buechi = new BuechiImpl(usedProperty, expressions, true);
+        Message buechiDone = buechi.isDeterministic() ?
+                MessagesAutomaton.COMPUTING_BUECHI_DONE_DET
+                : MessagesAutomaton.COMPUTING_BUECHI_DONE_NONDET;
+        log.send(buechiDone, buechi.getNumLabels(), buechi.getNumStates());
+        return new ParityAutomaton(buechi);
+    }
+    
+    public static AutomatonScheweParity newAutomatonScheweParity
+    (Expression property, Expression[] expressions) {
+        assert property != null;
+        Options options = Options.get();
+        Buechi buechi = null;
+        Log log = options.get(OptionsMessages.LOG);
+        Expression usedProperty = property;
+        log.send(MessagesAutomaton.COMPUTING_ORIG_BUECHI);
+        buechi = new BuechiImpl(usedProperty, expressions, true);
+        Message buechiDone = buechi.isDeterministic() ?
+                MessagesAutomaton.COMPUTING_BUECHI_DONE_DET
+                : MessagesAutomaton.COMPUTING_BUECHI_DONE_NONDET;
+        log.send(buechiDone, buechi.getNumLabels(), buechi.getNumStates());
+        Map<String,Class<Automaton.Builder>> automata = Options.get().get(OptionsAutomaton.AUTOMATON_CLASS);
+        AutomatonScheweParity.Builder result = (AutomatonScheweParity.Builder)
+                Util.getInstanceByClass(automata,
+                        a -> AutomatonScheweParity.Builder.class.isAssignableFrom(a));
+        result.setBuechi(buechi);
+        return result.build();
+    }
+    
     public static Buechi newBuechi
     (Expression property, Expression[] expressions, boolean isNondet,
             ValueBoolean negate) {
@@ -146,6 +185,7 @@ public final class UtilAutomaton {
         assert property != null;
         return BuechiImpl.createSpotAutomaton(property, spotParameters, null);
     }
+    
     
     public static Buechi computeBuechi(Expression property, Expression[] expressions) {
         assert property != null;
