@@ -1,51 +1,29 @@
 package epmc.ltl;
 
-import static epmc.error.UtilError.ensure;
 import static epmc.modelchecker.TestHelper.assertEquals;
 import static epmc.modelchecker.TestHelper.computeResult;
-import static epmc.modelchecker.TestHelper.computeResultsMapDefinition;
-import static epmc.modelchecker.TestHelper.loadModel;
 import static epmc.modelchecker.TestHelper.prepare;
 import static epmc.modelchecker.TestHelper.prepareOptions;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import epmc.automaton.ProblemsAutomaton;
-import epmc.automaton.hoa.HoaParser;
-import epmc.graph.explicit.GraphExplicit;
 import epmc.main.options.UtilOptionsEPMC;
-import epmc.messages.OptionsMessages;
-import epmc.messages.TimeStampFormatSecondsStarted;
 import epmc.modelchecker.EngineExplicit;
-import epmc.modelchecker.Model;
 import epmc.modelchecker.TestHelper;
-import epmc.modelchecker.TestHelper.LogType;
 import epmc.modelchecker.options.OptionsModelChecker;
 import epmc.operator.OperatorSet;
 import epmc.options.Options;
 import epmc.plugin.OptionsPlugin;
-import epmc.prism.model.ModelPRISM;
-import epmc.propertysolver.ltllazy.OptionsLTLLazy;
 import epmc.qmc.model.ModelPRISMQMC;
 import epmc.qmc.model.PropertyPRISMQMC;
 import epmc.qmc.value.TypeMatrix;
 import epmc.qmc.value.ValueMatrix;
 import epmc.value.ContextValue;
 import epmc.value.OperatorEvaluator;
-import epmc.value.OptionsValue;
 import epmc.value.TypeInteger;
 import epmc.value.TypeReal;
 import epmc.value.Value;
