@@ -2,6 +2,7 @@
 .project
 .setting
 .classpath
+.pluginlist
 
 # Compiled class file
 *.class
