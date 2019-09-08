@@ -53,4 +53,4 @@
 
 ```
 
-![](./pics/Q1.jpg)
+![](https://github.com/gaochong1111/epmc/tree/master/doc/pics/Q1.jpg)
