@@ -52,5 +52,6 @@
         （注意：冯老师文档中提到的算法2对应下图论文里的算法1）
 
 ```
+### 参考图片
+![](https://github.com/gaochong1111/epmc/raw/master/doc/pics/Q1.jpg)
 
-![](https://github.com/gaochong1111/epmc/tree/master/doc/pics/Q1.jpg)
