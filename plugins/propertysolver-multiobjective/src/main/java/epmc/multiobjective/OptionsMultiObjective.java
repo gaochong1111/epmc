@@ -1,8 +1,0 @@
-package epmc.multiobjective;
-
-public enum OptionsMultiObjective {
-    OPTIONS_MULTI_OBJECTIVE,
-    MULTI_OBJECTIVE_CATEGORY,
-    MULTI_OBJECTIVE_MIN_INCREASE,
-    MULTI_OBJECTIVE_MIN_NONZERO_WEIGHT,
-}

@@ -1,8 +1,0 @@
-dtmc
-
-module wrongassignmentinit
-
-	s : bool init false;
-	
-	[] true -> true;
-endmodule
