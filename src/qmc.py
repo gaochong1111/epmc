@@ -7,7 +7,7 @@ import numpy as np
 np.set_printoptions(threshold=np.inf)
 from common import is_positive, get_support, decompose_into_positive_operators,\
     is_zero_array, projector_join, get_orth_complement
-from common import array_equal,matrix_infinite
+from common import array_equal
 from super_operator import create_from_matrix_representation, SuperOperator
 from scipy.linalg.decomp_svd import orth
 from scipy.constants.constants import epsilon_0
@@ -51,13 +51,15 @@ def pqmc_values(states, Q, pri, classical_state, super_operator_demension):
     print("M:")
     print(M.shape)
     
-    M_infinite = matrix_infinite(M)
+    super_operator_M = create_from_matrix_representation(M)
+    M_infinite = super_operator_M.infinity().get_matrix_representation()
     print("M_infinite:")
     print(M_infinite)
     
     M_even = np.zeros([(super_operator_demension ** 2) * (state_demension ** 2), (super_operator_demension ** 2) * (state_demension ** 2)], dtype=np.complex)
-    bscc_min_pri = dict()
-    B = get_bscc(M, np.kron(I_c, I_H))
+    bscc_min_pri_key = []
+    bscc_min_pri_value = []
+    B = super_operator_M.get_bscc(np.kron(I_c, I_H))
     print("B:")
     print(B)
     for b in B:
@@ -76,115 +78,24 @@ def pqmc_values(states, Q, pri, classical_state, super_operator_demension):
                         break
             if flag:
                 C_b.append(nonzero_index)
-        bscc_min_pri[b] = np.min(C_b)
+        bscc_min_pri_key.append(b)
+        bscc_min_pri_value.append(np.min(C_b))
     EP = set()
-    for key, value in pri:
+    print(pri)
+    for key, value in pri.items():
         if value % 2 == 0:
             EP.add(key)
     for k in EP:
         P_k = np.zeros([super_operator_demension * state_demension, super_operator_demension * state_demension], dtype=np.complex)
-        for key, value in bscc_min_pri:
-            if value == k:
-                P_k += key
+        for i in range(len(bscc_min_pri_key)):
+            if bscc_min_pri_value[i] == k:
+                P_k += bscc_min_pri_key[i]
         M_even += np.kron(P_k, P_k)
     
+    M_c = np.matrix(M_c)
+    M_even = np.matrix(M_even)
+    M_s = np.matrix(M_s)
     return M_c * M_even * M_infinite * M_s 
-
-def check_bscc(super_operator, projector):
-    '''
-    '''
-    support = get_support(super_operator.apply_on_operator(projector))
-    if not is_positive(projector - support):
-        return False
-    
-    matrix_representation = np.kron(projector, np.conjugate(projector)) * super_operator.get_matrix_representation()
-    
-    pro_so = create_from_matrix_representation(matrix_representation)
-    fix_points = pro_so.get_positive_eigen_operators()
-    
-    if len(fix_points) != 1:
-        return False
-    
-    return array_equal(fix_points[0], projector)
-
-
-def get_bscc(super_operator, projector):
-    matrix_representation = np.kron(projector, np.conjugate(projector)) * super_operator.get_matrix_representation()
-    
-    pro_so = create_from_matrix_representation(matrix_representation)
-    
-    fix_points = pro_so.get_positive_eigen_operators()
-    
-    '''fix_points[i] compare to projector'''
-    
-    fix_points = sorted(fix_points, key=lambda x: np.linalg.matrix_rank(x))
-    pop_index = []
-    
-    for i in range(len(fix_points) - 1):
-        support_i = get_support(fix_points[i])
-        for j in range(i + 1, len(fix_points)):
-            if j in pop_index:
-                continue
-            support_j = get_support(fix_points[j])
-            if array_equal(fix_points[i], fix_points[j]) or is_positive(support_j - support_i):
-                pop_index.append(j)
-    
-    for index in pop_index:
-        fix_points.pop(index)
-    
-    
-    res = []
-    
-    if len(fix_points) == 0:
-        return res
-    elif len(fix_points) == 1:
-        res.append(get_support(fix_points[0]))
-        return res
-    else:
-        diff = fix_points[0] - fix_points[1]
-        real_positive, real_negative, _, _ = decompose_into_positive_operators(diff)
-        projector_s = None
-        if is_zero_array(real_positive):
-            projector_s = get_support(real_negative)
-        else:
-            projector_s = get_support(real_positive)
-        complement = projector - projector_s
-        
-        res.extend(get_bscc(super_operator, projector_s))
-        res.extend(get_bscc(super_operator, complement))
-        return res
-    
-def bscc_decomposition(super_operator):
-    dimension = super_operator.dimension
-    res = get_bscc(super_operator, np.eye(dimension, dimension, dtype=np.complex))
-    
-    stationary = np.matrix(np.zeros([dimension, dimension], dtype=np.complex))
-    for projector in res:
-        stationary = projector_join(stationary, projector)
-    
-    res.insert(0, get_orth_complement(stationary))
-    
-    return res
-    
-def period_decomposition(super_operator, bscc):
-    res = []
-    
-    if not check_bscc(super_operator, bscc):
-        return res
-    
-    so = super_operator.apply_on_operator(bscc)
-    matrix_representation = so.get_matrix_representation()
-    
-    eigen_values, _ = np.linalg.eig(matrix_representation)
-    
-    period = 0
-    
-    for i in range(len(eigen_values)):
-        if np.abs((eigen_values[i] - 1.0).real) < epsilon_0 and np.abs(eigen_values[i].imag) < epsilon_0:
-            period = period + 1
-    
-    return get_bscc(super_operator.power(period), bscc)
-        
         
 
 if __name__ == '__main__':
@@ -201,6 +112,7 @@ if __name__ == '__main__':
     Q = Q_prim
         
     print(pqmc_values(states, Q, pri, classical_state, super_operator_demension))
+    
     '''
     m = np.matrix(np.zeros([2, 2], dtype = np.complex))
     m[0, 0] = 1.0 + 0.0j
@@ -213,11 +125,15 @@ if __name__ == '__main__':
     print(jordan_eigen_value(c))
     print(matrix_infinite(a))
     
+    m = np.matrix(np.zeros([2, 2], dtype = np.complex))
+    m[0, 1] = 1.0 + 0.0j
+    m[1, 0] = 1.0 + 0.0j
     so = SuperOperator([m])
     projector = np.matrix(np.eye(2, 2, dtype = np.complex))
-    print(get_bscc(so, projector))
+    print(so.get_bscc(projector))
     
-    for p in get_bscc(so, projector):
+    for p in so.get_bscc(projector):
         print(orth(p))
     '''
+    
     

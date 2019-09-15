@@ -3,11 +3,11 @@ Created on 2019年8月1日
 
 @author: chenyan
 '''
-from common import decompose_into_positive_operators,get_support,is_square, is_zero_array
+from common import decompose_into_positive_operators,get_support,is_square, is_zero_array,\
+    is_positive, array_equal, projector_join, get_orth_complement
 import numpy as np
 from scipy.constants.constants import epsilon_0
 from sympy.codegen.fnodes import dimension
-from qmc import bscc_decomposition, period_decomposition
 
 class SuperOperator:
     '''
@@ -121,16 +121,131 @@ class SuperOperator:
             return self.product_super_operator(self.power(n - 1))
         
     def max_period(self):
-        projects = bscc_decomposition(self)  
-        periods = np.zeros(len(projects) - 1)
+        projects = self.bscc_decomposition()  
+        periods = np.zeros(len(projects) - 1, dtype=np.int32)
         
         for i in range(1, len(projects)):
-            periods[i - 1] = len(period_decomposition(self, projects[i]))
+            periods[i - 1] = len(self.period_decomposition(projects[i]))
         
         return np.max(periods)
     
     def infinity(self):
-        pass
+        this_matrix = self.get_matrix_representation()
+        start = 15
+        start_matrix = self.get_matrix_representation()
+        
+        for _ in range(start):
+            start_matrix = start_matrix * start_matrix
+        
+        max_period = self.max_period()
+        for _ in range(max_period):
+            start_matrix = start_matrix + start_matrix * this_matrix
+        
+        start_matrix = 1.0 / max_period * start_matrix
+        previous_matrix = start_matrix
+        
+        n = 1
+        while True:
+            current_matrix =  n * previous_matrix * this_matrix + start_matrix
+            current_matrix = 1.0 / (n + 1) * current_matrix
+            if is_zero_array(previous_matrix - current_matrix):
+                break
+            previous_matrix = current_matrix
+            ++n
+        return create_from_matrix_representation(current_matrix)
+    
+    def check_bscc(self, projector):
+        support = get_support(self.apply_on_operator(projector))
+        if not is_positive(projector - support):
+            return False
+        
+        matrix_representation = np.kron(projector, np.conjugate(projector)) * self.get_matrix_representation()
+        
+        pro_so = create_from_matrix_representation(matrix_representation)
+        fix_points = pro_so.get_positive_eigen_operators()
+        
+        if len(fix_points) != 1:
+            return False
+        
+        return array_equal(fix_points[0], projector)
+
+    def get_bscc(self, projector):
+        matrix_representation = np.kron(projector, np.conjugate(projector)) * self.get_matrix_representation()
+        
+        pro_so = create_from_matrix_representation(matrix_representation)
+        
+        fix_points = pro_so.get_positive_eigen_operators()
+        
+        '''fix_points[i] compare to projector'''
+        
+        fix_points = sorted(fix_points, key=lambda x: np.linalg.matrix_rank(x))
+        pop_index = []
+        
+        for i in range(len(fix_points) - 1):
+            support_i = get_support(fix_points[i])
+            for j in range(i + 1, len(fix_points)):
+                if j in pop_index:
+                    continue
+                support_j = get_support(fix_points[j])
+                if array_equal(fix_points[i], fix_points[j]) or is_positive(support_j - support_i):
+                    pop_index.append(j)
+        
+        for index in pop_index:
+            fix_points.pop(index)
+    
+        res = []
+        
+        if len(fix_points) == 0:
+            return res
+        elif len(fix_points) == 1:
+            res.append(get_support(fix_points[0]))
+            return res
+        else:
+            diff = fix_points[0] - fix_points[1]
+            real_positive, real_negative, _, _ = decompose_into_positive_operators(diff)
+            projector_s = None
+            if is_zero_array(real_positive):
+                projector_s = get_support(real_negative)
+            else:
+                projector_s = get_support(real_positive)
+            complement = projector - projector_s
+            
+            res.extend(self.get_bscc(projector_s))
+            res.extend(self.get_bscc(complement))
+            return res
+    
+    def bscc_decomposition(self):
+        dimension = self.dimension
+        res = self.get_bscc(np.eye(dimension, dimension, dtype=np.complex))
+        
+        stationary = np.matrix(np.zeros([dimension, dimension], dtype=np.complex))
+        for projector in res:
+            stationary = projector_join(stationary, projector)
+        
+        res.insert(0, get_orth_complement(stationary))
+        
+        return res
+        
+    def period_decomposition(self, bscc):
+        res = []
+        
+        if not self.check_bscc(bscc):
+            return res
+        
+        so = self.product_operator(bscc)
+        matrix_representation = so.get_matrix_representation()
+        
+        eigen_values, _ = np.linalg.eig(matrix_representation)
+        
+        period = 0
+        
+        for i in range(len(eigen_values)):
+            if np.abs((eigen_values[i] - 1.0).real) < epsilon_0 and np.abs(eigen_values[i].imag) < epsilon_0:
+                period = period + 1
+        
+        return self.power(period).get_bscc(bscc)   
+        
+        
         
 def create_from_choi_representation(matrix):
     if not is_square(matrix):
