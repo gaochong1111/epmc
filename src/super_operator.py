@@ -138,7 +138,7 @@ class SuperOperator:
             start_matrix = start_matrix * start_matrix
         
         max_period = self.max_period()
-        for _ in range(max_period):
+        for _ in range(1, max_period):
             start_matrix = start_matrix + start_matrix * this_matrix
         
         start_matrix = 1.0 / max_period * start_matrix
